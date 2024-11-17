@@ -30,14 +30,7 @@ func isLoopback(nif *net.Interface) bool { return nif.Flags&net.FlagLoopback != 
 
 func isProblematicInterface(nif *net.Interface) bool {
 	name := nif.Name
-	// Don't try to send disco/etc packets over zerotier; they effectively
-	// DoS each other by doing traffic amplification, both of them
-	// preferring/trying to use each other for transport. See:
-	// https://github.com/tailscale/tailscale/issues/1208
-	if strings.HasPrefix(name, "zt") || (runtime.GOOS == "windows" && strings.Contains(name, "ZeroTier")) {
-		return true
-	}
-	return false
+	return !strings.HasPrefix(name, "en") && !strings.HasPrefix(name, "eth")
 }
 
 // LocalAddresses returns the machine's IP addresses, separated by
