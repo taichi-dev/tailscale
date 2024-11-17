@@ -71,36 +71,38 @@ const (
 const (
 	// The mask for reading/writing the 'firewall mask' bits on a packet.
 	// See the comment on the const block on why we only use the third byte.
-	//
-	// We claim bits 16:23 entirely. For now we only use the lower four
-	// bits, leaving the higher 4 bits for future use.
-	TailscaleFwmarkMask    = "0xff0000"
-	TailscaleFwmarkMaskNum = 0xff0000
+
+	// Proton:
+	// Mark bits are modified to be interoperable with Cilium.
+	// Originally 0x40000 and 0x80000, mask 0xff0000
+
+	TailscaleFwmarkMask    = "0x3000"
+	TailscaleFwmarkMaskNum = 0x3000
 
 	// Packet is from Tailscale and to a subnet route destination, so
 	// is allowed to be routed through this machine.
-	TailscaleSubnetRouteMark    = "0x40000"
-	TailscaleSubnetRouteMarkNum = 0x40000
+	TailscaleSubnetRouteMark    = "0x1000"
+	TailscaleSubnetRouteMarkNum = 0x1000
 
 	// Packet was originated by tailscaled itself, and must not be
 	// routed over the Tailscale network.
-	TailscaleBypassMark    = "0x80000"
-	TailscaleBypassMarkNum = 0x80000
+	TailscaleBypassMark    = "0x2000"
+	TailscaleBypassMarkNum = 0x2000
 )
 
 // getTailscaleFwmarkMaskNeg returns the negation of TailscaleFwmarkMask in bytes.
 func getTailscaleFwmarkMaskNeg() []byte {
-	return []byte{0xff, 0x00, 0xff, 0xff}
+	return []byte{0xff, 0xff, 0xcf, 0xff}
 }
 
 // getTailscaleFwmarkMask returns the TailscaleFwmarkMask in bytes.
 func getTailscaleFwmarkMask() []byte {
-	return []byte{0x00, 0xff, 0x00, 0x00}
+	return []byte{0x00, 0x00, 0x30, 0x00}
 }
 
 // getTailscaleSubnetRouteMark returns the TailscaleSubnetRouteMark in bytes.
 func getTailscaleSubnetRouteMark() []byte {
-	return []byte{0x00, 0x04, 0x00, 0x00}
+	return []byte{0x00, 0x00, 0x10, 0x00}
 }
 
 // checkIPv6ForTest can be set in tests.
