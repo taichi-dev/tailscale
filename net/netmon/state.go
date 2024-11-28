@@ -30,7 +30,11 @@ func isLoopback(nif *net.Interface) bool { return nif.Flags&net.FlagLoopback != 
 
 func isProblematicInterface(nif *net.Interface) bool {
 	name := nif.Name
-	return !strings.HasPrefix(name, "en") && !strings.HasPrefix(name, "eth")
+	ok := false
+	ok = ok || strings.HasPrefix(name, "en")
+	ok = ok || strings.HasPrefix(name, "eth")
+	ok = ok || strings.HasPrefix(name, "bond")
+	return !ok
 }
 
 // LocalAddresses returns the machine's IP addresses, separated by
